@@ -13,11 +13,13 @@ const IPAddress gatewayIP(4, 3, 2, 1);
 const IPAddress subnetMask(255, 255, 255, 0);
 const char localIPURL[] = "http://4.3.2.1";
 
-bool T3hasChanged = false;
-int threshold = 50;
+int touchPin = T3;  // corresponds to D15 on our modules
+
+volatile bool touchDetected = false;  // Wordt door de ISR gezet
+int threshold = 50;                   // Drempelwaarde voor touch
 
 void T3getTouch() {
-  T3hasChanged = true;
+  touchDetected = true;
 }
 
 void customEndPoints() {
@@ -60,6 +62,7 @@ void setup() {
   }
 
   touchAttachInterrupt(T3, T3getTouch, threshold);
+
   listFiles();
   getSSIDFromFS();
   startSoftAccessPoint(g_ssid, NULL, localIP, gatewayIP);
@@ -69,13 +72,14 @@ void setup() {
 }
 
 void loop() {
-  // if (T3hasChanged) {
-  //   T3hasChanged = false;
-  //   bool isTouched = touchRead(T3) < threshold;
-  //   String message = String("{\"touch_status\":") + (isTouched ? "\"true\"" : "\"false\"") + "}";
-  //   ws.textAll(message);
-  //   Serial.println(message);
-  // }
+  if (touchDetected) {
+    touchDetected = false;
+    int touchValue = touchRead(T3);
+    String message = String("{\"touch_status\":\"true\", \"touchValue\":") + touchValue + "}";
+    ws.textAll(message);
+    Serial.println(message);
+  }
+
   dnsServer.processNextRequest();
   ws.cleanupClients();
 }

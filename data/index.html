@@ -3,44 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update Display</title>
+  <title>WebSocket Touch Listener</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      transition: background-color 0.3s ease; /* Zachte overgang voor achtergrondkleur */
+      background-color: #ffffff; /* Standaard achtergrondkleur */
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Update Display</h1>
-  <form id="displayForm">
-    <label for="text">Text to Display:</label><br>
-    <input type="text" id="text" name="text" required><br><br>
-    <button type="submit">Update</button>
-  </form>
-
-  <p id="response"></p>
+  <h1>Touch Event Listener</h1>
+  <button id="startButton">Start</button>
+  <p id="status">Waiting for interaction...</p>
+  <audio id="audio" src="touch-sound.mp3"></audio>
 
   <script>
-    const form = document.getElementById('displayForm');
-    const responseElement = document.getElementById('response');
+    const statusEl = document.getElementById("status");
+    const startButton = document.getElementById("startButton");
+    const audio = document.getElementById("audio");
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const formData = new FormData(form);
-      const text = formData.get('text');
+    let ws; // WebSocket-instantie
 
-      try {
-        const response = await fetch('/update-display', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `text=${encodeURIComponent(text)}`
-        });
+    // Start WebSocket en activeer audio na interactie
+    startButton.addEventListener("click", () => {
+      // Verberg de knop na interactie
+      startButton.style.display = "none";
+      statusEl.textContent = "Connecting to WebSocket...";
 
-        if (response.ok) {
-          const responseText = await response.text();
-          responseElement.textContent = responseText;
-        } else {
-          responseElement.textContent = `Error: ${response.status} ${response.statusText}`;
+      // Maak een WebSocket-verbinding
+      ws = new WebSocket("ws://4.3.2.1/ws"); // Pas het IP-adres en pad aan indien nodig
+
+      ws.onopen = () => {
+        console.log("WebSocket connected");
+        statusEl.textContent = "Connected to WebSocket";
+      };
+
+      ws.onmessage = (event) => {
+        console.log("Message received:", event.data);
+
+        try {
+          // Parse het JSON-bericht
+          const message = JSON.parse(event.data);
+
+          // Controleer op touch_status
+          if (message.touch_status === "true") {
+            statusEl.textContent = "Touch detected! Playing sound and changing background.";
+            document.body.style.backgroundColor = getRandomColor(); // Verander de achtergrondkleur
+            audio.play().catch(err => {
+              console.error("Failed to play audio:", err);
+            });
+          }
+        } catch (err) {
+          console.error("Invalid message format:", err);
         }
-      } catch (error) {
-        responseElement.textContent = `Request failed: ${error}`;
-      }
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket disconnected");
+        statusEl.textContent = "Disconnected from WebSocket";
+      };
+
+      ws.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        statusEl.textContent = "WebSocket error";
+      };
+
+      // Laat de gebruiker het geluid activeren
+    //   audio.play().then(() => {
+    //     console.log("Audio context unlocked");
+    //   }).catch(err => {
+    //     console.error("Failed to unlock audio:", err);
+    //   });
     });
+
+    // Functie om een willekeurige kleur te genereren
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
   </script>
 </body>
 </html>
