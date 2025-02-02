@@ -1,38 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebSocket Touch Listener</title>
+  <title>AHK Excercise</title>
   <style>
+    @font-face {
+      font-family: "adelphe";
+      src: url("Adelphe-FlorealRegular.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: 'dindong';
+      src: url("DINdong.woff2") format("woff2");
+      font-display: swap;
+    }
+
     body {
+      font-family: "Adelphe";
       margin: 0;
       height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      font-family: Arial, sans-serif;
-      transition: background-color 0.3s ease; /* Zachte overgang voor achtergrondkleur */
-      background-color: #ffffff; /* Standaard achtergrondkleur */
+      transition: background-color 0.3s ease;
+      /* Zachte overgang voor achtergrondkleur */
+      background-color: teal;
+      text-align: center;
+      color: yellow;
     }
+
     button {
+      font-family: "dindong";
+      text-transform: uppercase;
       padding: 10px 20px;
       font-size: 18px;
       cursor: pointer;
+      border: none;
+      padding: 3rem;
+      color: yellow;
+      font-size: 4rem;
     }
+
     #status {
       margin-top: 20px;
       font-size: 16px;
     }
+
+    .rotating-border {
+      width: max-content;
+      background: linear-gradient(90deg, yellow 50%, transparent 50%), linear-gradient(90deg, yellow 50%, transparent 50%), linear-gradient(0deg, yellow 50%, transparent 50%), linear-gradient(0deg, yellow 50%, transparent 50%);
+      background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+      background-size: 15px 10px, 15px 10px, 10px 15px, 10px 15px;
+      /* padding: 10px; */
+      animation: border-dance 4s infinite linear;
+    }
+
+    @keyframes border-dance {
+      0% {
+        background-position: 0 0, 100% 100%, 0 100%, 100% 0;
+      }
+
+      100% {
+        background-position: 100% 0, 0 100%, 0 0, 100% 100%;
+      }
+    }
+
+    ul {
+      position: relative;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      margin-top: 4rem;
+    }
+
+    ul li {
+      opacity: 0;
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      animation: fadeCycle 12s infinite;
+      font-family: "dindong";
+      font-size: 4rem;
+      transform: translateX(-50%);
+    }
+
+    ul li:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    ul li:nth-child(2) {
+      animation-delay: 4s;
+    }
+
+    ul li:nth-child(3) {
+      animation-delay: 8s;
+    }
+
+    @keyframes fadeCycle {
+      0% {
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      30% {
+        opacity: 1;
+      }
+
+      40% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
   </style>
 </head>
-<body>
-  <h1>Touch Event Listener</h1>
-  <button id="startButton">Start</button>
-  <p id="status">Waiting for interaction...</p>
-  <audio id="audio" src="touch-sound.mp3"></audio>
 
+<body>
+  <!-- <h1>Touch Event Listener</h1> -->
+  <p id="status">Make sure your device is unmuted and the volume is up.<br />Please click the button below to get ready! </p>
+
+  <button id="startButton" class="rotating-border">Start</button>
+  <audio id="audio" src="Ahk_excersise_22k.mp3"></audio>
+  <ul class="slides">
+    <li>Listen</li>
+    <li>Look</li>
+    <li>Touch</li>
+  </ul>
   <script>
     const statusEl = document.getElementById("status");
     const startButton = document.getElementById("startButton");
@@ -44,14 +145,14 @@
     startButton.addEventListener("click", () => {
       // Verberg de knop na interactie
       startButton.style.display = "none";
-      statusEl.textContent = "Connecting to WebSocket...";
+      statusEl.textContent = "Connecting...";
 
       // Maak een WebSocket-verbinding
       ws = new WebSocket("ws://4.3.2.1/ws"); // Pas het IP-adres en pad aan indien nodig
 
       ws.onopen = () => {
         console.log("WebSocket connected");
-        statusEl.textContent = "Connected to WebSocket";
+        statusEl.textContent = "Connected. Waiting for touch.";
       };
 
       ws.onmessage = (event) => {
@@ -63,7 +164,7 @@
 
           // Controleer op touch_status
           if (message.touch_status === "true") {
-            statusEl.textContent = "Touch detected! Playing sound and changing background.";
+            statusEl.textContent = "Touch detected! Playing sound.";
             document.body.style.backgroundColor = getRandomColor(); // Verander de achtergrondkleur
             audio.play().catch(err => {
               console.error("Failed to play audio:", err);
@@ -83,16 +184,9 @@
         console.error("WebSocket error:", err);
         statusEl.textContent = "WebSocket error";
       };
-
-      // Laat de gebruiker het geluid activeren
-    //   audio.play().then(() => {
-    //     console.log("Audio context unlocked");
-    //   }).catch(err => {
-    //     console.error("Failed to unlock audio:", err);
-    //   });
     });
 
-    // Functie om een willekeurige kleur te genereren
+    // Genereer een willekeurige kleur
     function getRandomColor() {
       const letters = "0123456789ABCDEF";
       let color = "#";
@@ -103,4 +197,5 @@
     }
   </script>
 </body>
+
 </html>
