@@ -2,7 +2,8 @@
 #include <DNSServer.h>
 #include "WebServerUtils.h"
 
-char g_ssid[32] = "ESP_AP";  // set AP SSID. Can be overwritten by creating a file on LittleFS with extension .ssid
+// set AP SSID. Can be overwritten by creating a file on LittleFS with extension .ssid
+char g_ssid[32] = "ESP_AP";  
 
 // Do not touch the following variables
 AsyncWebServer server(80);
@@ -15,7 +16,7 @@ const char localIPURL[] = "http://4.3.2.1";
 
 int touchPin = T3;  // corresponds to D15 on our modules
 
-volatile bool touchDetected = false;  // Wordt door de ISR gezet
+volatile bool touchDetected = false;  // Gets set by interrupt
 int threshold = 50;                   // Drempelwaarde voor touch
 
 void T3getTouch() {
@@ -23,7 +24,6 @@ void T3getTouch() {
 }
 
 void customEndPoints() {
-  // Berichtenopslag en -response
   server.on("/message", HTTP_POST, [](AsyncWebServerRequest *request) {
     if (!LittleFS.exists("/message.txt")) {
       File file = LittleFS.open("/message.txt", "w");
