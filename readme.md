@@ -1,4 +1,4 @@
-![QR code to connect the AP](assets/APQR.png "Connect to the AP")
+![QR code to connect the AP](assets/APQR.png "Connect to the AP 'ultra local megabyte'")
 
 # Ultra Local Megabyte a.k.a. Podmapping
 
