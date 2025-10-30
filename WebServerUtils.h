@@ -4,7 +4,7 @@
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <LittleFS.h>
-#include <DNSServer.h>
+#include <ESPAsyncDNSServer.h>
 #include <IPAddress.h>
 
 // Externe variabelen
@@ -21,7 +21,7 @@ void listFiles();
 void getSSIDFromFS();
 
 // Functies voor netwerk en serverinstellingen
-void setUpDNSServer(DNSServer &dnsServer, const IPAddress &localIP);
+void setUpDNSServer(AsyncDNSServer &dnsServer, const IPAddress &localIP);
 void startSoftAccessPoint(const char *ssid, const char *password, const IPAddress &localIP, const IPAddress &gatewayIP);
 void setUpWebserver(AsyncWebServer &server, const IPAddress &localIP);
 

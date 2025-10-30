@@ -1,5 +1,5 @@
 #include <LittleFS.h>
-#include <DNSServer.h>
+#include <ESPAsyncDNSServer.h>
 #include "WebServerUtils.h"
 
 // set AP SSID. Can be overwritten by creating a file on LittleFS with extension .ssid
@@ -8,7 +8,7 @@ char g_ssid[32] = "ESP_AP";
 // Do not touch the following variables
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
-DNSServer dnsServer;
+AsyncDNSServer dnsServer;
 const IPAddress localIP(4, 3, 2, 1);
 const IPAddress gatewayIP(4, 3, 2, 1);
 const IPAddress subnetMask(255, 255, 255, 0);
@@ -80,6 +80,5 @@ void loop() {
     Serial.println(message);
   }
 
-  dnsServer.processNextRequest();
   ws.cleanupClients();
 }

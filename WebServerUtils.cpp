@@ -1,4 +1,5 @@
 #include "WebServerUtils.h"
+#include <WiFi.h>
 
 // Functies voor bestandshandeling
 void listFiles() {
@@ -42,8 +43,8 @@ void getSSIDFromFS() {
 }
 
 // Functies voor netwerk en serverinstellingen
-void setUpDNSServer(DNSServer &dnsServer, const IPAddress &localIP) {
-    dnsServer.setTTL(3600);
+void setUpDNSServer(AsyncDNSServer &dnsServer, const IPAddress &localIP) {
+    dnsServer.setErrorReplyCode(AsyncDNSReplyCode::ServerFailure);
     dnsServer.start(53, "*", localIP);
 }
 
