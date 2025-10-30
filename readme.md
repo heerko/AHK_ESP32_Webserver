@@ -24,9 +24,17 @@ Settings:
 - Partition scheme: No OTA 2mb/2mb.
 - Leave the rest to the defaults.
 - When working from the Arduino IDE use the [LittleFS upload tool](https://github.com/earlephilhower/arduino-littlefs-upload/releases) to upload the site to the ESP32.
+Press [Ctrl] + [Shift] + [P] or on macOS, press [⌘] + [Shift] + [P] to open the Command Palette in the Arduino IDE, then "Upload LittleFS to Pico/ESP8266/ESP32".
 
 Important! 
 ==========
 Do not install Esp32 boards with version above 3.0.6, 
 there seems to be a incompatibility between the newer versions 
 of the ESP32 boards package and Asyncwebserver.
+
+Dependencies
+============
+Install these libraries (Arduino IDE Library Manager or directly from the linked repositories) before building the sketch:
+- ESPAsyncWebServer by ESP32Async — https://github.com/ESP32Async/ESPAsyncWebServer
+- AsyncTCP by ESP32Async — https://github.com/ESP32Async/AsyncTCP
+- ESPAsyncDNSServer by devyte — https://github.com/devyte/ESPAsyncDNSServer (Not in Arduino Library manager)
